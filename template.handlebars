@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>JS Bin Archive</title>
+  <style>
+    *,
+    *::after,
+    *::before {
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+  <table>
+    <tbody>
+      {{#list}}
+      <tr>
+        <td class="url">
+          <a href="{{code}}-{{revision}}.html">
+            {{#if is_first}}
+            <span class="first">{{code}}</span>
+            {{else}}
+            <span class="snapshot">{{revision}}</span>
+            {{/if}}
+          </a>
+        </td>
+        <td class="last_updated">{{last_updated}}</td>
+        <td class="original"><a href="https://jsbin.com{{edit_url}}" target="_blank" rel="noopener">edit</a></td>
+        <td class="summary">{{summary}}</td>
+      </tr>
+      {{/list}}
+    </tbody>
+  </table>
+</body>
+
+</html>
