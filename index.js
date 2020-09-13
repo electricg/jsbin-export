@@ -57,8 +57,8 @@ const getSessionCookie = (cookies) =>
 
 /**
  * Add date to the page comments
- * @param {string} html Page content
- * @param {string} date Date
+ * @param {string} html - Page content
+ * @param {string} date - Date
  * @returns {string}
  */
 const addDateToPage = (html, date) => {
@@ -67,15 +67,35 @@ const addDateToPage = (html, date) => {
 };
 
 /**
- * Create html page for the json list
- * @param {Array} list List to transform into html
+ * Handlebars helper to show a date in the format 'DD MMM YYYY'
+ * @param {string} dateString - ISO date
+ * @returns {string} Date in the 'DD MMM YYYY' format
+ */
+const formatDate = (dateString) => {
+  const [ddd, MMM, DD, YYYY] = new Date(dateString.replace('Z', ''))
+    .toDateString()
+    .split(' ');
+  return [DD, MMM, YYYY].join(' ');
+};
+handlebars.registerHelper('date', formatDate);
+/**
+ * Handlebars helper to check if a string is equal to a value
+ */
+const ifEquals = function (arg1, arg2, options) {
+  return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+};
+handlebars.registerHelper('ifEquals', ifEquals);
+
+/**
+ * Create html for the list
+ * @param {Array} data - Data to transform into html
  * @returns {string}
  */
-const createHtmlList = (list) => {
+const createHtmlList = (data) => {
   const source = fs.readFileSync('./template.handlebars', 'utf-8');
   const template = handlebars.compile(source);
-  const result = template(list);
-  fs.writeFileSync('./output/index.html', result);
+  const result = template(data);
+  return result;
 };
 
 /**
@@ -130,13 +150,19 @@ const fetchListPage = async (sessionCookie) => {
 /**
  * Clean the output folder and create the files for the list
  * @param {Array} list - List of items
+ * @param {string} username - User username
  * @param {string} folder - Folder to save to
  */
-const saveListToFile = (list, folder) => {
-  const htmlList = createHtmlList(list);
+const saveListToFile = (list, username, folder) => {
+  const data = {
+    username,
+    last_exported: new Date().toISOString(),
+    list,
+  };
+  const htmlList = createHtmlList(data);
   fs.rmdirSync(folder, { recursive: true });
   fs.mkdirSync(folder);
-  fs.writeFileSync(`${folder}/list.json`, JSON.stringify({ list }, null, 2));
+  fs.writeFileSync(`${folder}/data.json`, JSON.stringify(data, null, 2));
   fs.writeFileSync(`${folder}/index.html`, htmlList);
 };
 
@@ -183,7 +209,7 @@ const fetchAndSaveItem = async (
  */
 const fetchItems = async (list, sessionCookie, folder, delay) =>
   list
-    .slice(0, 2)
+    .slice(0, 2) // TODO
     .reduce(
       (acc, item) =>
         acc.then(() =>
@@ -204,7 +230,7 @@ const jsbinExport = async () => {
       password,
     });
     const list = await fetchListPage(loggedInSessionCookie);
-    saveListToFile(list, folder);
+    saveListToFile(list, username, folder);
     await fetchItems(list, loggedInSessionCookie, folder, delay);
     console.log(`List of ${list.length} items generated`);
   } catch (err) {
@@ -212,6 +238,4 @@ const jsbinExport = async () => {
   }
 };
 
-// jsbinExport();
-const json = JSON.parse(fs.readFileSync('output/list.json', 'utf-8'));
-createHtmlList(json);
+jsbinExport();

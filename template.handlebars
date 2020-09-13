@@ -4,20 +4,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>JS Bin Archive</title>
+  <title>JS Bin {{username}}'s Archive</title>
   <style>
     *,
     *::after,
     *::before {
       box-sizing: border-box;
     }
+
+    body {
+      font-family: SourceCodeProRegular, Menlo, Monaco, consolas, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    dt {
+      display: inline;
+    }
+
+    dd {
+      display: inline;
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    tr:not(:first-child) {
+      color: #ccc;
+    }
+
+    tr:not(.separator):hover,
+    tr:not(.separator):hover .snapshot {
+      background: #61c0ff;
+      color: #fff;
+    }
+
+    .separator {
+      pointer-events: none;
+    }
+
+    .separator td {
+      height: 10px;
+    }
+
+    td {
+      padding: 0 10px;
+      vertical-align: baseline;
+    }
+
+    .url {
+      text-align: right;
+      width: 130px;
+    }
+
+    .snapshot {
+      color: #a1d8fd;
+    }
+
+    tr:nth-child(2) .snapshot:before,
+    tbody:hover tr:hover .snapshot:before {
+      content: 'snapshot# ';
+    }
+
+    tbody:hover .snapshot:before {
+      content: '';
+    }
+
+    .last_updated {
+      width: 120px;
+    }
+
+    .original {
+      width: 130px;
+    }
+
+    .summary {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   </style>
 </head>
 
 <body>
+  <h1>JS Bin {{username}}'s Archive</h1>
+  <dl>
+    <div>
+      <dt>Last exported:</dt>
+      <dd><time datetime="{{last_exported}}">{{date last_exported}}</time></dd>
+    </div>
+    <div>
+      <dt>Items:</dt>
+      <dd>{{list.length}}</dd>
+    </div>
+  </dl>
   <table>
+    {{#list}}
+    {{#if is_first}}
     <tbody>
-      {{#list}}
+      {{/if}}
       <tr>
         <td class="url">
           <a href="{{code}}-{{revision}}.html">
@@ -28,12 +122,22 @@
             {{/if}}
           </a>
         </td>
-        <td class="last_updated">{{last_updated}}</td>
-        <td class="original"><a href="https://jsbin.com{{edit_url}}" target="_blank" rel="noopener">edit</a></td>
+        <td class="last_updated"><time datetime="{{last_updated}}">{{date last_updated}}</time>
+        </td>
+        <td class="original"><a href="https://jsbin.com{{edit_url}}" target="_blank" rel="noopener">edit original</a>
+        </td>
         <td class="summary">{{summary}}</td>
       </tr>
-      {{/list}}
+      {{#ifEquals revision 1}}
+      <tr class="separator">
+        <td class="url"></td>
+        <td class="last_updated"></td>
+        <td class="original"></td>
+        <td class="summary"></td>
+      </tr>
     </tbody>
+    {{/ifEquals}}
+    {{/list}}
   </table>
 </body>
 
