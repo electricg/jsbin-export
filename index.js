@@ -150,18 +150,19 @@ const fetchListPage = async (sessionCookie) => {
 /**
  * Clean the output folder and create the files for the list
  * @param {Array} list - List of items
- * @param {string} username - User username
+ * @param {string} user - User username
  * @param {string} folder - Folder to save to
  */
-const saveListToFile = (list, username, folder) => {
+const saveListToFile = (list, user, folder) => {
   const data = {
-    username,
+    user,
     last_exported: new Date().toISOString(),
     list,
   };
   const htmlList = createHtmlList(data);
   fs.rmdirSync(folder, { recursive: true });
   fs.mkdirSync(folder);
+  fs.mkdirSync(`${folder}/bins`);
   fs.writeFileSync(`${folder}/data.json`, JSON.stringify(data, null, 2));
   fs.writeFileSync(`${folder}/index.html`, htmlList);
 };
@@ -195,7 +196,7 @@ const fetchAndSaveItem = async (
     },
   });
   const dataWithDate = addDateToPage(data, last_updated);
-  fs.writeFileSync(`${folder}/${code}-${revision}.html`, dataWithDate);
+  fs.writeFileSync(`${folder}/bins/${code}-${revision}.html`, dataWithDate);
   console.log(`${code}/${revision}`);
 };
 
@@ -209,7 +210,7 @@ const fetchAndSaveItem = async (
  */
 const fetchItems = async (list, sessionCookie, folder, delay) =>
   list
-    .slice(0, 2) // TODO
+    // .slice(0, 2) // TODO
     .reduce(
       (acc, item) =>
         acc.then(() =>

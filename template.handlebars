@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>JS Bin {{username}}'s Archive</title>
+  <title>JS Bin {{user}}'s Archive</title>
   <style>
     *,
     *::after,
@@ -30,6 +30,10 @@
     a {
       color: inherit;
       text-decoration: none;
+    }
+
+    .proper-link {
+      text-decoration: underline;
     }
 
     table {
@@ -96,7 +100,7 @@
 </head>
 
 <body>
-  <h1>JS Bin {{username}}'s Archive</h1>
+  <h1>JS Bin {{user}}'s Archive</h1>
   <dl>
     <div>
       <dt>Last exported:</dt>
@@ -106,6 +110,9 @@
       <dt>Items:</dt>
       <dd>{{list.length}}</dd>
     </div>
+    <div>
+      <dt><a class="proper-link" href="data.json">data.json</a></dt>
+    </div>
   </dl>
   <table>
     {{#list}}
@@ -114,7 +121,7 @@
       {{/if}}
       <tr>
         <td class="url">
-          <a href="{{code}}-{{revision}}.html">
+          <a href="bins/{{code}}-{{revision}}.html">
             {{#if is_first}}
             <span class="first">{{code}}</span>
             {{else}}
